@@ -1,0 +1,63 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista użytkowników</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" />
+</head>
+<body class="container mt-4">
+    <h2>Użytkownicy</h2>
+    <a class="btn btn-primary mb-3" th:href="@{/users/new}">Dodaj użytkownika</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Email</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>			<!DOCTYPE html>
+			<html xmlns:th="http://www.thymeleaf.org">
+			<head>
+			    <title>Lista użytkowników</title>
+			    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" />
+			</head>
+			<body class="container mt-4">
+			    <h2>Użytkownicy</h2>
+			    <a class="btn btn-primary mb-3" th:href="@{/users/new}">Dodaj użytkownika</a>
+			    <table class="table table-bordered">
+			        <thead>
+			            <tr>
+			                <th>Imię</th>
+			                <th>Nazwisko</th>
+			                <th>Email</th>
+			                <th>Akcje</th>
+			            </tr>
+			        </thead>
+			        <tbody>
+			            <tr th:each="user : ${users}">
+			                <td th:text="${user.imie}"></td>
+			                <td th:text="${user.nazwisko}"></td>
+			                <td th:text="${user.email}"></td>
+			                <td>
+			                    <a th:href="@{'/users/edit/' + ${user.id}}" class="btn btn-sm btn-warning">Edytuj</a>
+			                    <a th:href="@{'/users/delete/' + ${user.id}}" class="btn btn-sm btn-danger">Usuń</a>
+			                </td>
+			            </tr>
+			        </tbody>
+			    </table>
+			</body>
+			</html>
+
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.imie}"></td>
+                <td th:text="${user.nazwisko}"></td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <a th:href="@{'/users/edit/' + ${user.id}}" class="btn btn-sm btn-warning">Edytuj</a>
+                    <a th:href="@{'/users/delete/' + ${user.id}}" class="btn btn-sm btn-danger">Usuń</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

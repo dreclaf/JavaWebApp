@@ -1,0 +1,29 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formularz użytkownika</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" />
+</head>
+<body class="container mt-4">
+    <h2 th:text="${user.id != null ? 'Edytuj użytkownika' : 'Dodaj użytkownika'}"></h2>
+
+    <form th:action="@{${user.id != null} ? '/users/update' : '/users/save'}"
+          th:object="${user}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="mb-3">
+            <label>Imię:</label>
+            <input type="text" class="form-control" th:field="*{imie}" />
+        </div>
+        <div class="mb-3">
+            <label>Nazwisko:</label>
+            <input type="text" class="form-control" th:field="*{nazwisko}" />
+        </div>
+        <div class="mb-3">
+            <label>Email:</label>
+            <input type="email" class="form-control" th:field="*{email}" />
+        </div>
+        <button type="submit" class="btn btn-success">Zapisz</button>
+        <a class="btn btn-secondary" th:href="@{/users}">Anuluj</a>
+    </form>
+</body>
+</html>
