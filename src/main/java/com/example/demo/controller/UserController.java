@@ -2,12 +2,18 @@ package com.example.demo.controller;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,30 +30,44 @@ public class UserController {
 
     // 2. Pobierz użytkownika po ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Użytkownik o ID " + id + " nie istnieje."));
+        return ResponseEntity.ok(user);
     }
+
 
     // 3. Dodaj nowego użytkownika
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<?> createUser(@Valid @RequestBody User user, BindingResult result) {
+        if (result.hasErrors()) {
+            // Zbieramy błędy i zwracamy 400
+            StringBuilder errors = new StringBuilder();
+            result.getFieldErrors().forEach(error ->
+                errors.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ")
+            );
+            return ResponseEntity.badRequest().body(errors.toString());
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(user));
     }
 
-    // 4. Aktualizuj istniejącego użytkownika
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        Optional<User> optionalUser = userRepository.findById(id);
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody User userDetails, BindingResult result) {
+        if (result.hasErrors()) {
+            StringBuilder errors = new StringBuilder();
+            result.getFieldErrors().forEach(error ->
+                errors.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ")
+            );
+            return ResponseEntity.badRequest().body(errors.toString());
+        }
 
+        Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setImie(userDetails.getImie());
             user.setNazwisko(userDetails.getNazwisko());
             user.setEmail(userDetails.getEmail());
-            userRepository.save(user);
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(userRepository.save(user));
         } else {
             return ResponseEntity.notFound().build();
         }

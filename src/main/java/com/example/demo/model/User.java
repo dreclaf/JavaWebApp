@@ -1,17 +1,27 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "email")
+})
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Imię jest wymagane")
+    @Size(min = 2, message = "Imię musi mieć co najmniej 2 znaki")
     private String imie;
+
+    @NotBlank(message = "Nazwisko jest wymagane")
     private String nazwisko;
+
+    @NotBlank(message = "Email jest wymagany")
+    @Email(message = "Nieprawidłowy format adresu email")
     private String email;
 
 
